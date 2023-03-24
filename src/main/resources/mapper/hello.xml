@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Hello">
+
+    <select id="select" parameterType="String" resultType="com.api.hello.dto.Hello">
+        SELECT *
+        FROM  HELLO
+        WHERE NAME = #{name}
+    </select>
+
+    <insert id="insert" parameterType="com.api.hello.dto.Hello">
+        INSERT INTO HELLO(NAME,COUNT)
+        VALUES(#{name}, #{count})
+    </insert>
+
+    <update id="update" parameterType="com.api.hello.dto.Hello">
+        UPDATE HELLO SET
+        COUNT = #{count}
+        WHERE
+        NAME = #{name}
+    </update>
+
+</mapper>
