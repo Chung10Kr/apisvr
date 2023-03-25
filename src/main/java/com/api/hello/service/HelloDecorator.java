@@ -1,5 +1,6 @@
 package com.api.hello.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -7,7 +8,6 @@ import org.springframework.stereotype.Service;
 @Primary
 public class HelloDecorator implements HelloService {
     private final HelloService helloService;
-
     public HelloDecorator(HelloService helloService) {
         this.helloService = helloService;
     }

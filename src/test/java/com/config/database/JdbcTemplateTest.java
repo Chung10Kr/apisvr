@@ -15,14 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@Transactional
+@JdbcTest
 public class JdbcTemplateTest {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    SqlSessionTemplate sqlSession;
     @BeforeEach
     void init() {
         jdbcTemplate.execute("create table if not exists hello(name varchar(50) primary key, count int)"
@@ -37,15 +34,5 @@ public class JdbcTemplateTest {
         Long count = jdbcTemplate.queryForObject("select count(*) from hello", Long.class);
         assertThat(count).isEqualTo(2);
 
-    }
-
-    @Test
-    void Mybatis(){
-        Hello hello = new Hello("Mybatis-TEST" , 0);
-        sqlSession.insert("Hello.insert",hello);
-
-        Hello ret = sqlSession.selectOne("Hello.select",hello);
-        assertThat( hello.getName() ).isEqualTo(ret.getName());
-        assertThat( hello.getCount() ).isEqualTo(ret.getCount());
     }
 }

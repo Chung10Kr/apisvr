@@ -1,23 +1,14 @@
 package com.api.hello.dto;
 
+import lombok.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Hello {
+    @NonNull
     private String name;
     private int count;
 
-    public Hello(String name, int count) {
-        this.name = name;
-        this.count = count;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
-
-    public int getCount() {
-        return count;
-    }
 }
