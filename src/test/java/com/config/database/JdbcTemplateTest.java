@@ -22,14 +22,24 @@ public class JdbcTemplateTest {
 
     @BeforeEach
     void init() {
-        jdbcTemplate.execute("create table if not exists hello(name varchar(50) primary key, count int)"
-        );
+
+        String sql = """
+                create sequence if not exists table_hello_id_seq;
+                create table if not exists hello(
+                    id integer not null default nextval('table_hello_id_seq') primary key,
+                    name varchar(50) unique,
+                    count int,
+                    ins_timestamp date default now()
+                );
+                """;
+
+        jdbcTemplate.execute(sql);
     }
 
     @Test
     void insertAndQuery() {
-        jdbcTemplate.update("insert into hello values(?, ?)", "Toby", 3);
-        jdbcTemplate.update("insert into hello values(?, ?)", "Spring", 1);
+        jdbcTemplate.update("insert into hello(name,count) values(?, ?)", "Toby", 3);
+        jdbcTemplate.update("insert into hello(name,count) values(?, ?)", "Spring", 1);
 
         Long count = jdbcTemplate.queryForObject("select count(*) from hello", Long.class);
         assertThat(count).isEqualTo(2);

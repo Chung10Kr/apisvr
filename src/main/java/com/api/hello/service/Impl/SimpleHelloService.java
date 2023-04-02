@@ -1,5 +1,6 @@
-package com.api.hello.service;
+package com.api.hello.service.Impl;
 
+import com.api.hello.service.HelloService;
 import org.springframework.stereotype.Service;
 import com.api.hello.repository.HelloRepository;
 

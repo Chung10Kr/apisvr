@@ -1,13 +1,13 @@
-package com.api.hello.repository;
+package com.api.hello.repository.impl;
 
 import com.api.hello.dto.Hello;
-import org.mybatis.spring.SqlSessionTemplate;
+import com.api.hello.repository.HelloRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
 
 
-@Repository
 public class HelloRepositoryJdbc implements HelloRepository {
     private final JdbcTemplate jdbcTemplate;
 
@@ -20,7 +20,11 @@ public class HelloRepositoryJdbc implements HelloRepository {
         try {
             return jdbcTemplate.queryForObject("select * from hello where name = '" + name + "'",
                     (rs, rowNum) -> new Hello(
-                            rs.getString("name"), rs.getInt("count")
+                            rs.getLong("idx"),
+                            rs.getString("name"),
+                            rs.getInt("count"),
+                            rs.getObject("ins_timestamp", LocalDate.class),
+                            rs.getObject("upd_timestamp", LocalDate.class)
                     ));
         }
         catch(EmptyResultDataAccessException e) {
@@ -31,8 +35,8 @@ public class HelloRepositoryJdbc implements HelloRepository {
     @Override
     public void increaseCount(String name) {
         Hello hello = findHello(name);
-        if (hello == null) jdbcTemplate.update("insert into hello values(?, ?)", name, 1);
-        else jdbcTemplate.update("update hello set count = ? where name = ?", hello.getCount() + 1,
+        if (hello == null) jdbcTemplate.update("insert into hello(name,count) values(?,?)", name, 1);
+        else jdbcTemplate.update("update hello set count = ? , upd_timestamp = now() where name = ?", hello.getCount() + 1,
                 name);
     }
 }

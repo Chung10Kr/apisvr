@@ -1,5 +1,7 @@
 package com.api.hello.service;
 
+import com.api.hello.service.Impl.HelloDecorator;
+import com.api.hello.service.Impl.SimpleHelloService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import com.api.hello.dto.Hello;
@@ -29,7 +31,7 @@ public class HelloServiceTest {
 
     @Test
     void helloDecorator() {
-        HelloDecorator decorator = new HelloDecorator(name -> name);
+        HelloDecorator decorator = new HelloDecorator(name -> name, alarmMsg);
 
         String ret = decorator.sayHello("Test");
 

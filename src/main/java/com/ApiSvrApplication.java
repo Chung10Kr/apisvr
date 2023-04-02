@@ -7,8 +7,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionEvaluationRepor
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import jakarta.annotation.PostConstruct;
-
 @SpringBootApplication
 public class ApiSvrApplication {
     private final JdbcTemplate jdbcTemplate;
@@ -17,9 +15,18 @@ public class ApiSvrApplication {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @PostConstruct
+    //@PostConstruct
     void init() {
-        jdbcTemplate.execute("create table if not exists hello(name varchar(50) primary key, count int)");
+        String sql = """
+                create sequence if not exists table_hello_id_seq;
+                create table if not exists hello(
+                    id integer not null default nextval('table_hello_id_seq') primary key,
+                    name varchar(50) unique,
+                    count int,
+                    ins_timestamp date default now()
+                );
+                """;
+        jdbcTemplate.execute(sql);
     }
 
     @Bean

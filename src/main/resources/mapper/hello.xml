@@ -16,7 +16,8 @@
 
     <update id="update" parameterType="com.api.hello.dto.Hello">
         UPDATE HELLO SET
-        COUNT = #{count}
+        COUNT = #{count},
+        UPD_TIMESTAMP = NOW()
         WHERE
         NAME = #{name}
     </update>

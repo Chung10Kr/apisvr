@@ -2,6 +2,7 @@ package com.api.hello;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,9 @@ public class HelloApiTest {
 
     String SERVER_URL;
 
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
     @BeforeEach
     void init(){
         this.SERVER_URL = String.format("%s:%s%s", URL,PORT,CONTEXT_PATH);
@@ -40,6 +45,26 @@ public class HelloApiTest {
         assertThat(res.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).startsWith(MediaType.TEXT_PLAIN_VALUE);
 
         assertThat(res.getBody()).isEqualTo("*Hello Spring*");
+    }
+
+    @Test
+    void countApi(){
+        String name = "ApiTest";
+        Long count = jdbcTemplate.queryForObject("select count from hello where name = '"+name+"'", Long.class);
+
+        TestRestTemplate rest = new TestRestTemplate();
+        int i=0;
+        while(i<3){
+            rest.getForEntity(this.SERVER_URL + "/hello?name={name}", String.class, name);
+            i++;
+        }
+        ResponseEntity<String> res = rest.getForEntity(this.SERVER_URL + "/count?name={name}", String.class, name);
+
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(res.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).startsWith(MediaType.TEXT_PLAIN_VALUE);
+
+        count = count+i;
+        assertThat(res.getBody()).isEqualTo(name+": "+count);
     }
 
     @Test

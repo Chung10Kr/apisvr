@@ -14,6 +14,13 @@ public class HelloControllerTest {
     }
 
     @Test
+    void helloControllerCount(){
+        HelloController helloController = new HelloController(name -> name);
+
+        String ret = helloController.count("Test");
+        Assertions.assertThat(ret).isEqualTo("Test: 0");
+    }
+    @Test
     void failsHelloController() {
         HelloController helloController = new HelloController(name -> name);
 

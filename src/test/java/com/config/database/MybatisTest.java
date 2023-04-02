@@ -18,7 +18,11 @@ public class MybatisTest {
 
     @Test
     void Mybatis(){
-        Hello hello = new Hello("Mybatis-TEST" , 0);
+        Hello hello = Hello.builder()
+                .name("Mybatis")
+                .count(0)
+                .build();
+
         sqlSession.insert("Hello.insert",hello);
 
         Hello ret = sqlSession.selectOne("Hello.select",hello);
