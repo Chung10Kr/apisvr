@@ -31,8 +31,7 @@ public class HelloServiceTest {
 
     @Test
     void helloDecorator() {
-        HelloDecorator decorator = new HelloDecorator(name -> name, alarmMsg);
-
+        HelloDecorator decorator = new HelloDecorator(name -> name,(to,from)-> true);
         String ret = decorator.sayHello("Test");
 
         Assertions.assertThat(ret).isEqualTo("*Test*");

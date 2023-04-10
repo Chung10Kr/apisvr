@@ -8,13 +8,22 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * fileName       : SlackMsg
+ * author         : crlee
+ * date           : 2023/04/02
+ * description    : Slack 웹훅 메세지 보내기 ( 참고 - https://chung10.tistory.com/159 )
+ * ===========================================================
+ * DATE              AUTHOR             NOTE
+ * -----------------------------------------------------------
+ * 2023/04/02        crlee       최초 생성
+ */
 @Component
 public class SlackMsg implements AlarmMsg {
+
+    private String URL = ".";
     @Override
     public boolean sendMsg(String to, String name) {
-
-        String url = "https://hooks.slack.com/services/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";
-
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -30,7 +39,7 @@ public class SlackMsg implements AlarmMsg {
         HttpEntity<Map<String,Object>> request = new HttpEntity<>(requestBody, headers);
 
         // POST 요청 보내기
-        ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(this.URL, request, String.class);
 
         // 응답 본문 가져오기
         String responseBody = response.getBody();
