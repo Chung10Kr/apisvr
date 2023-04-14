@@ -27,6 +27,6 @@ public class Locker {
 
     private String name;
 
-    @OneToOne(mappedBy = "locker")
+    @OneToOne(mappedBy = "locker" , cascade = CascadeType.PERSIST)
     private Member member = new Member();
 }

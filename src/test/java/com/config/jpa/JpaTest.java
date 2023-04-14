@@ -54,6 +54,19 @@ public class JpaTest {
         this.emf.close();
     }
     @Test
+    public void cascadeTest(){
+        Member member1 = Member.builder()
+                .id("memberid1")
+                .username("member1")
+                .age(1)
+                .build();
+        Locker locker1 = Locker.builder().id(1L).name("사물함1").member(member1).build();
+        em.persist(locker1);
+
+        Assertions.assertThat( em.contains(member1) ).isTrue();
+        Assertions.assertThat( em.contains(locker1) ).isTrue();
+    }
+    @Test
     public void proxyTest(){
         Team team1 = Team.builder()
                 .id("team1")
@@ -71,6 +84,7 @@ public class JpaTest {
         em.flush();
         em.clear();
         Member findMember = em.find(Member.class,"memberid1");
+
         Team findTeam = findMember.getTeam();
         Assertions.assertThat(findTeam.getName()).isEqualTo("팀1");
     }
