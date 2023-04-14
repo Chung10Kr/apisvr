@@ -1,5 +1,6 @@
 package com;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,18 +16,9 @@ public class ApiSvrApplication {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    //@PostConstruct
+    @PostConstruct
     void init() {
-        String sql = """
-                create sequence if not exists table_hello_id_seq;
-                create table if not exists hello(
-                    id integer not null default nextval('table_hello_id_seq') primary key,
-                    name varchar(50) unique,
-                    count int,
-                    ins_timestamp date default now()
-                );
-                """;
-        jdbcTemplate.execute(sql);
+
     }
 
     @Bean
