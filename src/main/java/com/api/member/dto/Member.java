@@ -77,4 +77,7 @@ public class Member {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="LOCKER_ID")
     private Locker locker;
+
+    @Embedded Address address;
+
 }

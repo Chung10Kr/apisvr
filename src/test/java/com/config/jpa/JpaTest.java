@@ -1,17 +1,10 @@
 package com.config.jpa;
 
-import com.api.hello.dto.Hello;
-import com.api.member.dto.Locker;
-import com.api.member.dto.Member;
-import com.api.member.dto.Team;
+import com.api.member.dto.*;
 import jakarta.persistence.*;
-import org.apache.catalina.Lifecycle;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -37,23 +30,66 @@ public class JpaTest {
     @BeforeAll
     public void init(){
         //this.em = emf.createEntityManager();
+        this.em = emf.createEntityManager();
     }
     @BeforeEach
     public void open(){
-        this.em = emf.createEntityManager();
         this.tx = em.getTransaction();
         this.tx.begin(); //트랜잭션 시작
     }
     @AfterEach
     public void close(){
-        this.tx.commit();//트랜잭션 커밋
-        this.em.close(); //엔티티 매니저 종료
+        //this.tx.commit();//트랜잭션 커밋
+        this.tx.rollback();
     }
     @AfterAll
     public void end(){
+        this.em.close(); //엔티티 매니저 종료
         this.emf.close();
     }
+
+
     @Test
+    
+    public void EmbeddedTest(){
+        Zipcode zipcode = Zipcode.builder().zip("22202").plusFour("엑슬뤁워 102동 2204호").build();
+        Address address = Address.builder()
+                .state("닛뽄바시")
+                .city("오사카")
+                .street("관동")
+                .zipcode(zipcode)
+                .build();
+        Member member1 = Member.builder()
+                .id("memberid1")
+                .username("member1")
+                .age(1)
+                .address(address)
+                .build();
+        em.persist(member1);
+
+        Member findMember = em.find(Member.class,"memberid1");
+        Assertions.assertThat( findMember.getAddress().getStreet() ).isEqualTo( "관동" );
+        Assertions.assertThat( findMember.getAddress().getCity() ).isEqualTo( "오사카" );
+        Assertions.assertThat( findMember.getAddress().getZipcode().getZip() ).isEqualTo( "22202" );
+    }
+
+    @Test
+    
+    public void EmbeddedNullTest(){
+        Member member1 = Member.builder()
+                .id("memberid1")
+                .username("member1")
+                .age(1)
+                .address(null)
+                .build();
+        em.persist(member1);
+
+        Member findMember = em.find(Member.class,"memberid1");
+        Assertions.assertThat( findMember.getAddress() ).isNull();
+    }
+
+    @Test
+    
     public void cascadeTest(){
         Member member1 = Member.builder()
                 .id("memberid1")
@@ -67,6 +103,7 @@ public class JpaTest {
         Assertions.assertThat( em.contains(locker1) ).isTrue();
     }
     @Test
+    
     public void proxyTest(){
         Team team1 = Team.builder()
                 .id("team1")
@@ -89,6 +126,7 @@ public class JpaTest {
         Assertions.assertThat(findTeam.getName()).isEqualTo("팀1");
     }
     @Test
+    
     public void testSave(){
         Team team1 = Team.builder()
                 .id("team1")
@@ -135,7 +173,7 @@ public class JpaTest {
     }
 
     @Test
-    public void logic() {
+    public void insertAndSelect() {
 
         String id = "id1";
         Member member = new Member();
@@ -165,13 +203,13 @@ public class JpaTest {
         //목록 조회
         List<Member> members = em.createQuery("select m from Member m", Member.class).getResultList();
         //여기서 Member는 MEMBER테이블이 아니라 Member엔티티를 말한다.
-        Assertions.assertThat(members.size()).isGreaterThan(1);
-
+        Assertions.assertThat(members.size()).isEqualTo(1);
         //삭제
-        em.remove(member);
+        //em.remove(member);
     }
 
     @Test
+    
     @DisplayName("detach일경우 영속성 컨텍스트에서 빠지는지 확인")
     public void detachTest(){
 
@@ -193,6 +231,7 @@ public class JpaTest {
 
 
     @Test
+    
     @DisplayName("clear일경우 영속성 컨텍스트에서 모두 빠지는지 확인")
     public void clearTest(){
         String id = "id1";
