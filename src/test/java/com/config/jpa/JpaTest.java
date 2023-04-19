@@ -29,7 +29,6 @@ public class JpaTest {
     EntityTransaction tx;
     @BeforeAll
     public void init(){
-        //this.em = emf.createEntityManager();
         this.em = emf.createEntityManager();
     }
     @BeforeEach
@@ -126,7 +125,6 @@ public class JpaTest {
         Assertions.assertThat(findTeam.getName()).isEqualTo("팀1");
     }
     @Test
-    
     public void testSave(){
         Team team1 = Team.builder()
                 .id("team1")
