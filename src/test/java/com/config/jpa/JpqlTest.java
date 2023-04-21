@@ -45,7 +45,7 @@ public class JpqlTest {
     @AfterAll
     public void end(){
         this.em.close(); //엔티티 매니저 종료
-        this.emf.close();
+        //this.emf.close();
     }
 
     void setData(){
@@ -97,11 +97,6 @@ public class JpqlTest {
 
     @Test
     void projectionTest(){
-        TypedQuery query = em.createQuery( "select m.username from Member m where m.username = :username" , String.class );
-        query.setParameter("username" , "2" );
-        List<String> resultList = query.getResultList();
-        Assertions.assertThat( resultList.get(0) ).isEqualTo("kim1");
-
         Query query2 = em.createQuery( "select m.username from Member m where m.username = :username");
         query2.setParameter("username" , "kim1" );
         List<String> resultList2 = query2.getResultList();

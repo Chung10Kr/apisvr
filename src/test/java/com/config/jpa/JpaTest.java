@@ -44,7 +44,7 @@ public class JpaTest {
     @AfterAll
     public void end(){
         this.em.close(); //엔티티 매니저 종료
-        this.emf.close();
+        //this.emf.close();
     }
 
 

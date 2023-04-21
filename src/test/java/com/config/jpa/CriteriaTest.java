@@ -10,6 +10,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
@@ -23,6 +24,8 @@ import java.util.List;
  * -----------------------------------------------------------
  * 2023/04/19        crlee       최초 생성
  */
+@DataJpaTest
+@TestInstance (TestInstance. Lifecycle.PER_CLASS)
 public class CriteriaTest {
 
 
@@ -49,7 +52,7 @@ public class CriteriaTest {
     @AfterAll
     public void end(){
         this.em.close(); //엔티티 매니저 종료
-        this.emf.close();
+        //this.emf.close();
     }
 
     void setData(){
