@@ -3,9 +3,12 @@ package com.config.jpa;
 import com.api.member.dto.Member;
 import com.api.member.dto.QMember;
 import com.api.member.dto.Team;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryModifiers;
+import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import jakarta.persistence.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
@@ -142,4 +145,45 @@ public class QueryDSLTest {
         Assertions.assertThat( findMember.get(0).getUsername() ).isEqualTo( "kim20" );
     }
 
+    @Test
+    void updateTest(){
+        QMember member = QMember.member;
+        JPAUpdateClause updateClause = new JPAUpdateClause(em,member);
+        Long count = updateClause.where(member.username.eq("kim1"))
+                .set(member.age,11)
+                .execute();
+        Member findMember = em.find(Member.class,"memberid1");
+        Assertions.assertThat( findMember.getAge() ).isEqualTo( 11 );
+
+        JPADeleteClause deleteClause = new JPADeleteClause(em,member);
+        Long count2 = deleteClause.where(member.id.eq("memberid1"))
+                .execute();
+        em.flush();
+        em.clear();
+
+        Member findMember2 = em.find(Member.class,"memberid1");
+        Assertions.assertThat( findMember2 ).isNull();
+    }
+
+    @Test
+    void dynamicQuery(){
+        QMember member = QMember.member;
+        BooleanBuilder builder = new BooleanBuilder();
+        if( true ){
+            builder.and( member.age.eq( 1) );
+        }
+        if( false ){
+            builder.and( member.age.eq( 2 ));
+        };
+
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        List<Member> findMember = queryFactory
+                .selectFrom(member)
+                .where(
+                        builder
+                )
+                .fetch();
+        Assertions.assertThat( findMember.get(0).getAge() ).isEqualTo( 1 );
+    }
 }
